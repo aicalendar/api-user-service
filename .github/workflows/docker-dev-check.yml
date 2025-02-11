@@ -40,7 +40,7 @@ jobs:
 
     - name: Test Docker image
       run: |
-        docker run -d -p 80:80 ghcr.io/${{ github.repository_owner }}/api-user-service:dev-latest
+        docker run -d -p 8000:8000 ghcr.io/${{ github.repository_owner }}/api-user-service:dev-latest
         # Wait a bit for the container to start and then test it
         sleep 5
         curl --silent --fail http://localhost:8000/api/hello || exit 1
