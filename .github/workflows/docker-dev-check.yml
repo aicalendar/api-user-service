@@ -16,7 +16,7 @@ on:
       - 'dev'
 
 jobs:
-  build:
+  docker-build-and-check:
     runs-on: ubuntu-latest
 
     steps:
