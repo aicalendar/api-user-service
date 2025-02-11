@@ -1,0 +1,3 @@
+module api-user-service
+
+go 1.23.3
