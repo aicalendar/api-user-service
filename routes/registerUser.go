@@ -4,7 +4,6 @@ import (
 	"api-user-service/database"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
-	"log"
 	"net/http"
 	"time"
 )
@@ -22,7 +21,6 @@ func RegisterUser(c *gin.Context) {
 	var newJSONUser User
 	// Binds request to newJSONUser variable
 	if err := c.BindJSON(&newJSONUser); err != nil {
-		log.Println("Failed to bind JSON")
 		c.JSON(http.StatusBadRequest, "Failed to bind JSON")
 		return
 	}
@@ -31,15 +29,12 @@ func RegisterUser(c *gin.Context) {
 	userQuery := User{}
 	queryResult := database.DB.Where("name = ?", newJSONUser.Name).Find(&userQuery)
 	if queryResult.Error != nil {
-		log.Println("Error occurred while querying existing user!")
 		c.IndentedJSON(http.StatusInternalServerError, "Error occurred while querying existing user!")
 		return
 	}
 	if queryResult.RowsAffected > 0 {
-		log.Println("Cannot register user, username duplicate!")
 		c.JSON(http.StatusConflict, "Cannot register user, username duplicate!")
 	} else if queryResult.RowsAffected == 0 {
-		log.Println("No duplicate found, registering new user!")
 
 		// User to insert into database
 		newDbUser := User{
@@ -52,15 +47,11 @@ func RegisterUser(c *gin.Context) {
 		// Trying to insert into database
 		dbCreateResult := database.DB.Create(&newDbUser)
 		if dbCreateResult.Error != nil {
-			log.Println("Error occurred while inserting to database!")
 			c.IndentedJSON(http.StatusInternalServerError, "Error occurred while inserting to database!")
 			return
 		}
 		if dbCreateResult.RowsAffected > 0 {
-			log.Println("Successfully register new user!")
 			c.IndentedJSON(http.StatusCreated, newDbUser)
 		}
-
 	}
-
 }
