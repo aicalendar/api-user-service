@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"api-user-service/database"
 	"log"
 	"net/http"
 	"time"
@@ -16,12 +17,28 @@ type User struct {
 }
 
 func RegisterUser(c *gin.Context) {
-	var newUser User
+	var newJSONUser User
 
-	if err := c.BindJSON(&newUser); err != nil {
+	if err := c.BindJSON(&newJSONUser); err != nil {
 		log.Println("Failed to bind JSON")
 		return
 	}
 
-	c.IndentedJSON(http.StatusCreated, newUser)
+	newDbUser := User{
+		Name:      newJSONUser.Name,
+		Password:  newJSONUser.Password,
+		CreatedAt: time.Now(),
+	}
+
+	dbCreateResult := database.DB.Create(&newDbUser)
+	if dbCreateResult.Error != nil {
+		log.Println("Error occurred while inserting to database!")
+		return
+	}
+
+	if dbCreateResult.RowsAffected > 0 {
+		log.Println("Successfully register new user!")
+	}
+
+	c.IndentedJSON(http.StatusCreated, newDbUser)
 }
