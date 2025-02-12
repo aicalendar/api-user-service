@@ -2,16 +2,16 @@ package routes
 
 import (
 	"api-user-service/database"
+	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"log"
 	"net/http"
 	"time"
-
-	"github.com/gin-gonic/gin"
 )
 
 type User struct {
-	ID        uint      `json:"id"`
-	Name      string    `gorm:"unique" json:"name"`
+	ID        string    `json:"id"`
+	Name      string    `json:"name"`
 	Password  string    `json:"password"`
 	CreatedAt time.Time `json:"createdAt"`
 }
@@ -25,6 +25,7 @@ func RegisterUser(c *gin.Context) {
 	}
 
 	newDbUser := User{
+		ID:        uuid.New().String(),
 		Name:      newJSONUser.Name,
 		Password:  newJSONUser.Password,
 		CreatedAt: time.Now(),
