@@ -24,5 +24,6 @@ func SetupRoutes(r *gin.Engine) {
 	routeGroup := r.Group("/api-user-service")
 	{
 		routeGroup.GET("/test", routes.Test)
+		routeGroup.POST("/registerUser", routes.RegisterUser)
 	}
 }
