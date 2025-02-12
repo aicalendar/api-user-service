@@ -10,11 +10,11 @@ func main() {
 
 	SetupRoutes(r)
 
-	r.Run(":8000")
+	r.Run(":80")
 }
 
 func SetupRoutes(r *gin.Engine) {
-	routeGroup := r.Group("/user-service")
+	routeGroup := r.Group("/")
 	{
 		routeGroup.GET("/test", routes.Test)
 	}
