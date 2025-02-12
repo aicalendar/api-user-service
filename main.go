@@ -1,13 +1,21 @@
 package main
 
 import (
+	"api-user-service/routes"
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
 	r := gin.Default()
-	r.GET("/api/hello", func(c *gin.Context) {
-		c.JSON(200, gin.H{"message": "Hello world!"})
-	})
-	r.Run(":8000") // Start server on port 8080
+
+	SetupRoutes(r)
+
+	r.Run(":80")
+}
+
+func SetupRoutes(r *gin.Engine) {
+	routeGroup := r.Group("/api-user-service")
+	{
+		routeGroup.GET("/test", routes.Test)
+	}
 }
