@@ -27,6 +27,21 @@ func RegisterUser(c *gin.Context) {
 		return
 	}
 
+	// Query for existing user
+	userQuery := User{}
+	queryResult := database.DB.Where("name = ?", newJSONUser.Name).Find(&userQuery)
+	if queryResult.Error != nil {
+		log.Println("Error occurred while querying existing user!")
+		c.IndentedJSON(http.StatusInternalServerError, "Error occurred while querying existing user!")
+		return
+	}
+	if queryResult.RowsAffected > 0 {
+		log.Println("Cannot register user, username duplicate!")
+		c.JSON(http.StatusConflict, "Cannot register user, username duplicate!")
+	} else if queryResult.RowsAffected == 0 {
+		log.Println("dada")
+	}
+
 	// User to insert into database
 	newDbUser := User{
 		ID:        uuid.New().String(),
