@@ -21,6 +21,7 @@ func RegisterUser(c *gin.Context) {
 
 	if err := c.BindJSON(&newJSONUser); err != nil {
 		log.Println("Failed to bind JSON")
+		c.JSON(http.StatusBadRequest, "Failed to bind JSON")
 		return
 	}
 
@@ -34,12 +35,12 @@ func RegisterUser(c *gin.Context) {
 	dbCreateResult := database.DB.Create(&newDbUser)
 	if dbCreateResult.Error != nil {
 		log.Println("Error occurred while inserting to database!")
+		c.IndentedJSON(http.StatusInternalServerError, "Error occurred while inserting to database!")
 		return
 	}
 
 	if dbCreateResult.RowsAffected > 0 {
 		log.Println("Successfully register new user!")
+		c.IndentedJSON(http.StatusCreated, newDbUser)
 	}
-
-	c.IndentedJSON(http.StatusCreated, newDbUser)
 }
