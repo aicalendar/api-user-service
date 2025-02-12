@@ -39,26 +39,28 @@ func RegisterUser(c *gin.Context) {
 		log.Println("Cannot register user, username duplicate!")
 		c.JSON(http.StatusConflict, "Cannot register user, username duplicate!")
 	} else if queryResult.RowsAffected == 0 {
-		log.Println("dada")
+		log.Println("No duplicate found, registering new user!")
+
+		// User to insert into database
+		newDbUser := User{
+			ID:        uuid.New().String(),
+			Name:      newJSONUser.Name,
+			Password:  newJSONUser.Password,
+			CreatedAt: time.Now(),
+		}
+
+		// Trying to insert into database
+		dbCreateResult := database.DB.Create(&newDbUser)
+		if dbCreateResult.Error != nil {
+			log.Println("Error occurred while inserting to database!")
+			c.IndentedJSON(http.StatusInternalServerError, "Error occurred while inserting to database!")
+			return
+		}
+		if dbCreateResult.RowsAffected > 0 {
+			log.Println("Successfully register new user!")
+			c.IndentedJSON(http.StatusCreated, newDbUser)
+		}
+
 	}
 
-	// User to insert into database
-	newDbUser := User{
-		ID:        uuid.New().String(),
-		Name:      newJSONUser.Name,
-		Password:  newJSONUser.Password,
-		CreatedAt: time.Now(),
-	}
-
-	// Trying to insert into database
-	dbCreateResult := database.DB.Create(&newDbUser)
-	if dbCreateResult.Error != nil {
-		log.Println("Error occurred while inserting to database!")
-		c.IndentedJSON(http.StatusInternalServerError, "Error occurred while inserting to database!")
-		return
-	}
-	if dbCreateResult.RowsAffected > 0 {
-		log.Println("Successfully register new user!")
-		c.IndentedJSON(http.StatusCreated, newDbUser)
-	}
 }
