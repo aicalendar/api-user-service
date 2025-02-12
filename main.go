@@ -14,7 +14,7 @@ func main() {
 }
 
 func SetupRoutes(r *gin.Engine) {
-	routeGroup := r.Group("/")
+	routeGroup := r.Group("/api-user-service")
 	{
 		routeGroup.GET("/test", routes.Test)
 	}
