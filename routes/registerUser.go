@@ -39,6 +39,7 @@ func RegisterUser(c *gin.Context) {
 	if queryResult.RowsAffected > 0 {
 		log.Warn().Msg("Cannot register user, username duplicate!")
 		c.JSON(http.StatusConflict, "Cannot register user, username duplicate!")
+		return
 	} else if queryResult.RowsAffected == 0 {
 		log.Info().Msg("No duplicate found, registering new user!")
 
@@ -60,6 +61,7 @@ func RegisterUser(c *gin.Context) {
 		if dbCreateResult.RowsAffected > 0 {
 			log.Info().Msg("Registered new user " + newDbUser.Name + " with id: " + newDbUser.ID)
 			c.IndentedJSON(http.StatusCreated, newDbUser)
+			return
 		}
 	}
 }
