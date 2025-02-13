@@ -65,12 +65,12 @@ func RegisterUser(c *gin.Context) {
 		dbCreateResult := database.DB.Create(&newDbUser)
 		if dbCreateResult.Error != nil {
 			log.Error().Msg("Error occurred while inserting to database!")
-			c.IndentedJSON(http.StatusInternalServerError, "Error occurred while inserting to database!")
+			c.JSON(http.StatusInternalServerError, "Error occurred while inserting to database!")
 			return
 		}
 		if dbCreateResult.RowsAffected > 0 {
 			log.Info().Msg("Registered new user " + newDbUser.Name + " with id: " + newDbUser.ID)
-			c.IndentedJSON(http.StatusCreated, newDbUser)
+			c.JSON(http.StatusCreated, newDbUser)
 			return
 		}
 	}
