@@ -6,7 +6,7 @@ import (
 )
 
 // Generate a random salt
-func GenerateSalt(size int) []byte {
+func GenerateSalt(size int) ([]byte, error) {
 
 	// Generate random bytes
 	salt := make([]byte, size)
@@ -15,8 +15,8 @@ func GenerateSalt(size int) []byte {
 	// Log on error
 	if err != nil {
 		log.Error().Msg("Failed reading random salt into bytes!")
-		return nil
+		return nil, err
 	}
 
-	return salt
+	return salt, nil
 }
