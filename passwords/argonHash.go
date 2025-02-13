@@ -11,7 +11,7 @@ func HashPassword(password string) (string, string, error) {
 	// Generate random salt
 	salt, err := GenerateSalt(16)
 	if err != nil {
-		log.Error().Msg("Failed generating password")
+		log.Error().Msg("Failed generating salt")
 		return "", "", nil
 	}
 

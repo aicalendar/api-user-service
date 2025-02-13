@@ -2,6 +2,7 @@ package routes
 
 import (
 	"api-user-service/database"
+	"api-user-service/passwords"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
@@ -10,10 +11,11 @@ import (
 )
 
 type User struct {
-	ID        string    `json:"id"`
-	Name      string    `json:"name"`
-	Password  string    `json:"password"`
-	CreatedAt time.Time `json:"createdAt"`
+	ID           string    `json:"id"`
+	Name         string    `json:"name"`
+	PasswordHash string    `json:"passwordHash"`
+	HashSalt     string    `json:"passwordSalt"`
+	CreatedAt    time.Time `json:"createdAt"`
 }
 
 func RegisterUser(c *gin.Context) {
@@ -43,12 +45,20 @@ func RegisterUser(c *gin.Context) {
 	} else if queryResult.RowsAffected == 0 {
 		log.Info().Msg("No duplicate found, registering new user!")
 
+		passwordHash, hashSalt, err := passwords.HashPassword(newJSONUser.PasswordHash)
+		if err != nil {
+			log.Error().Msg("Failed hashing password!")
+			c.JSON(http.StatusInternalServerError, "Failed hashing password!")
+			return
+		}
+
 		// User to insert into database
 		newDbUser := User{
-			ID:        uuid.New().String(),
-			Name:      newJSONUser.Name,
-			Password:  newJSONUser.Password,
-			CreatedAt: time.Now(),
+			ID:           uuid.New().String(),
+			Name:         newJSONUser.Name,
+			PasswordHash: passwordHash,
+			HashSalt:     hashSalt,
+			CreatedAt:    time.Now(),
 		}
 
 		// Trying to insert into database
