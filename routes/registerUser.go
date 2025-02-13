@@ -20,7 +20,9 @@ type User struct {
 
 func RegisterUser(c *gin.Context) {
 	// Create / modify table based on schema
-	database.DB.AutoMigrate(&User{})
+	if err := database.DB.AutoMigrate(&User{}); err != nil {
+		log.Error().Msg("Error occured while migrating scheme")
+	}
 
 	var newJSONUser User
 	// Binds request to newJSONUser variable

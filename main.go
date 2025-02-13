@@ -3,7 +3,9 @@ package main
 import (
 	"api-user-service/database"
 	"api-user-service/routes"
+
 	"github.com/gin-gonic/gin"
+	"github.com/rs/zerolog/log"
 )
 
 func main() {
@@ -17,7 +19,9 @@ func main() {
 	SetupRoutes(r)
 
 	// Run gin server
-	r.Run(":80")
+	if err := r.Run(":80"); err != nil {
+		log.Panic().Msg("PANICIG failed to start gin server")
+	}
 }
 
 func SetupRoutes(r *gin.Engine) {
