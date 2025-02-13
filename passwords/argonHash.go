@@ -16,9 +16,9 @@ func HashPassword(password string) (string, string, error) {
 	}
 
 	// Argon2id parameters
-	time := uint32(2)
+	time := uint32(3)
 	memory := uint32(64 * 1024)
-	threads := uint8(4)
+	threads := uint8(1)
 	keyLen := uint32(32)
 
 	// Generate Argon2id hash
