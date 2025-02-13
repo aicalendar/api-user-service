@@ -70,7 +70,7 @@ func RegisterUser(c *gin.Context) {
 		}
 		if dbCreateResult.RowsAffected > 0 {
 			log.Info().Msg("Registered new user " + newDbUser.Name + " with id: " + newDbUser.ID)
-			c.JSON(http.StatusCreated, newDbUser)
+			c.JSON(http.StatusCreated, "Registered new user "+newDbUser.Name+" with id: "+newDbUser.ID)
 			return
 		}
 	}
