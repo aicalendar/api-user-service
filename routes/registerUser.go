@@ -16,10 +16,9 @@ func RegisterUser(c *gin.Context) {
 		log.Error().Msg("Error occured while migrating scheme")
 	}
 
-	var newJSONUser User
 	// Binds request to newJSONUser variable
+	var newJSONUser User
 	if err := c.BindJSON(&newJSONUser); err != nil {
-		log.Error().Msg("Failed to bind JSON")
 		c.JSON(http.StatusBadRequest, "Failed to bind JSON")
 		return
 	}
@@ -28,23 +27,17 @@ func RegisterUser(c *gin.Context) {
 	userQuery := User{}
 	queryResult := database.DB.Where("name = ?", newJSONUser.Name).Find(&userQuery)
 	if queryResult.Error != nil {
-		log.Error().Msg("Error occurred while querying existing user!")
 		c.JSON(http.StatusInternalServerError, "Error occurred while querying existing user!")
 		return
 	}
 	if queryResult.RowsAffected > 0 {
 		// If duplicate was found return
-		log.Warn().Msg("Cannot register user, username duplicate!")
 		c.JSON(http.StatusConflict, "Cannot register user, username duplicate!")
 		return
 	} else if queryResult.RowsAffected == 0 {
-		// If no duplicate was found continue registering
-		log.Info().Msg("No duplicate found, registering new user!")
-
-		// Trying to hash password
+		// If no duplicate was found try to hash password
 		passwordHash, hashSalt, err := passwords.HashPassword(newJSONUser.PasswordHash)
 		if err != nil {
-			log.Error().Msg("Failed hashing password!")
 			c.JSON(http.StatusInternalServerError, "Failed hashing password!")
 			return
 		}
@@ -61,13 +54,11 @@ func RegisterUser(c *gin.Context) {
 		// Trying to insert into database
 		dbCreateResult := database.DB.Create(&newDbUser)
 		if dbCreateResult.Error != nil {
-			log.Error().Msg("Error occurred while inserting to database!")
 			c.JSON(http.StatusInternalServerError, "Error occurred while inserting to database!")
 			return
 		}
 		// Return result
 		if dbCreateResult.RowsAffected > 0 {
-			log.Info().Msg("Registered new user " + newDbUser.Name + " with id: " + newDbUser.ID)
 			c.JSON(http.StatusCreated, "Registered new user "+newDbUser.Name+" with id: "+newDbUser.ID)
 			return
 		}
