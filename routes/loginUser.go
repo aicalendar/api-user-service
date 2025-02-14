@@ -33,11 +33,12 @@ func LoginUser(c *gin.Context) {
 	} else if queryResult.RowsAffected > 0 {
 		// If user was found compare passwords
 		passwordMatch := passwords.ComparePasswords(JSONUserData.PasswordHash, userQuery.PasswordHash, userQuery.HashSalt)
-		if passwordMatch {
-			c.JSON(http.StatusOK, "Password matches!")
+		if !passwordMatch {
+			c.JSON(http.StatusConflict, "Password doesn't match!")
 			return
 		} else {
-			c.JSON(http.StatusConflict, "Password doesn't match!")
+			// TODO: generate session token
+			c.JSON(http.StatusOK, "Password matches!")
 			return
 		}
 
