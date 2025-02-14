@@ -33,12 +33,15 @@ func RegisterUser(c *gin.Context) {
 		return
 	}
 	if queryResult.RowsAffected > 0 {
+		// If duplicate was found return
 		log.Warn().Msg("Cannot register user, username duplicate!")
 		c.JSON(http.StatusConflict, "Cannot register user, username duplicate!")
 		return
 	} else if queryResult.RowsAffected == 0 {
+		// If no duplicate was found continue registering
 		log.Info().Msg("No duplicate found, registering new user!")
 
+		// Trying to hash password
 		passwordHash, hashSalt, err := passwords.HashPassword(newJSONUser.PasswordHash)
 		if err != nil {
 			log.Error().Msg("Failed hashing password!")
@@ -62,6 +65,7 @@ func RegisterUser(c *gin.Context) {
 			c.JSON(http.StatusInternalServerError, "Error occurred while inserting to database!")
 			return
 		}
+		// Return result
 		if dbCreateResult.RowsAffected > 0 {
 			log.Info().Msg("Registered new user " + newDbUser.Name + " with id: " + newDbUser.ID)
 			c.JSON(http.StatusCreated, "Registered new user "+newDbUser.Name+" with id: "+newDbUser.ID)
