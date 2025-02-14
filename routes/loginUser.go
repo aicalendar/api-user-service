@@ -2,6 +2,7 @@ package routes
 
 import (
 	"api-user-service/database"
+	"api-user-service/passwords"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -28,16 +29,22 @@ func LoginUser(c *gin.Context) {
 	}
 
 	if queryResult.RowsAffected == 0 {
-
 		// If no user with matching name was found
 		log.Warn().Msg("Invalid username!")
 		c.JSON(http.StatusConflict, "Invalid username!")
 		return
 
 	} else if queryResult.RowsAffected > 0 {
-
 		// If user was found
 		log.Info().Msg("User found checking password!")
-		// TODO: check password match, assign session token
+
+		// Compare passwords
+		passwordMatch := passwords.ComparePasswords(JSONUserData.PasswordHash, userQuery.PasswordHash, userQuery.HashSalt)
+		if passwordMatch {
+			log.Debug().Msg("Pasword match")
+		} else {
+			log.Debug().Msg("Password doesn't match")
+		}
+
 	}
 }
