@@ -10,14 +10,6 @@ import (
 	"time"
 )
 
-type User struct {
-	ID           string    `json:"id"`
-	Name         string    `json:"name"`
-	PasswordHash string    `json:"passwordHash"`
-	HashSalt     string    `json:"passwordSalt"`
-	CreatedAt    time.Time `json:"createdAt"`
-}
-
 func RegisterUser(c *gin.Context) {
 	// Create / modify table based on schema
 	if err := database.DB.AutoMigrate(&User{}); err != nil {
