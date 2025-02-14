@@ -29,5 +29,6 @@ func SetupRoutes(r *gin.Engine) {
 	{
 		routeGroup.GET("/test", routes.Test)
 		routeGroup.POST("/registerUser", routes.RegisterUser)
+		routeGroup.POST("/loginUser", routes.LoginUser)
 	}
 }
