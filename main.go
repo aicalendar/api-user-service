@@ -11,9 +11,6 @@ import (
 func main() {
 	var err error
 
-	// Default gin engine instance
-	r := gin.Default()
-
 	// Connect to db
 	err = database.ConnectToDB()
 	if err != nil {
@@ -29,6 +26,9 @@ func main() {
 	} else {
 		log.Info().Msg("Successfully connected to redis!")
 	}
+
+	// Default gin engine instance
+	r := gin.Default()
 
 	// Setup all api endpoints
 	SetupRoutes(r)
