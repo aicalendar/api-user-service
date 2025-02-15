@@ -12,16 +12,14 @@ func main() {
 	var err error
 
 	// Connect to db
-	err = database.ConnectToDB()
-	if err != nil {
+	if err = database.ConnectToDB(); err != nil {
 		log.Panic().Err(err)
 	} else {
 		log.Info().Msg("Successfully connected to database!")
 	}
 
 	// Connect to redis
-	err = database.ConnectToRedis()
-	if err != nil {
+	if err = database.ConnectToRedis(); err != nil {
 		log.Panic().Err(err)
 	} else {
 		log.Info().Msg("Successfully connected to redis!")
