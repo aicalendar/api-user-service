@@ -42,7 +42,7 @@ func main() {
 func SetupRoutes(r *gin.Engine) {
 	routeGroup := r.Group("/api-user-service")
 	{
-		routeGroup.GET("/test", routes.Test)
+		routeGroup.GET("/ping", routes.Ping)
 		routeGroup.POST("/registerUser", routes.RegisterUser)
 		routeGroup.POST("/loginUser", routes.LoginUser)
 	}
