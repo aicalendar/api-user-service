@@ -2,11 +2,19 @@ package passwords
 
 import (
 	"encoding/base64"
+	"errors"
+
 	"golang.org/x/crypto/argon2"
 )
 
 // Hash a password using Argon2id with a unique salt
 func HashPassword(password string) (string, string, error) {
+
+	// If input password is empty return error
+	if password == "" {
+		return "", "", errors.New("Input password is empty!")
+	}
+
 	// Generate random salt
 	salt, err := GenerateSalt(16)
 	if err != nil {
