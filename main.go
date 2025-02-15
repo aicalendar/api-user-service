@@ -15,6 +15,9 @@ func main() {
 	// Connect to db
 	database.ConnectToDB()
 
+	// Connect to redis
+	database.ConnectToRedis()
+
 	// Setup all api endpoints
 	SetupRoutes(r)
 
