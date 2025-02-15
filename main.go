@@ -9,28 +9,40 @@ import (
 )
 
 func main() {
-	// Default gin engine instance
-	r := gin.Default()
+	var err error
 
 	// Connect to db
-	database.ConnectToDB()
+	if err = database.ConnectToDB(); err != nil {
+		log.Panic().Err(err)
+	} else {
+		log.Info().Msg("Successfully connected to database!")
+	}
 
 	// Connect to redis
-	database.ConnectToRedis()
+	if err = database.ConnectToRedis(); err != nil {
+		log.Panic().Err(err)
+	} else {
+		log.Info().Msg("Successfully connected to redis!")
+	}
+
+	// Default gin engine instance
+	r := gin.Default()
 
 	// Setup all api endpoints
 	SetupRoutes(r)
 
 	// Run gin server
-	if err := r.Run(":80"); err != nil {
-		log.Panic().Msg("PANICIG failed to start gin server")
+	if err = r.Run(":80"); err != nil {
+		log.Panic().Err(err)
+	} else {
+		log.Info().Msg("Successfully started gin server!")
 	}
 }
 
 func SetupRoutes(r *gin.Engine) {
 	routeGroup := r.Group("/api-user-service")
 	{
-		routeGroup.GET("/test", routes.Test)
+		routeGroup.GET("/ping", routes.Ping)
 		routeGroup.POST("/registerUser", routes.RegisterUser)
 		routeGroup.POST("/loginUser", routes.LoginUser)
 	}

@@ -6,12 +6,11 @@ import (
 	"os"
 
 	"github.com/redis/go-redis/v9"
-	"github.com/rs/zerolog/log"
 )
 
 var REDIS *redis.Client
 
-func ConnectToRedis() {
+func ConnectToRedis() error {
 
 	// Create a context
 	ctx := context.Background()
@@ -23,17 +22,17 @@ func ConnectToRedis() {
 	// Parsing dsn into redis url
 	url, err := redis.ParseURL(dsn)
 	if err != nil {
-		log.Panic().Err(err)
+		return err
 	}
 
 	// Connect to redis using url
-	REDIS := redis.NewClient(url)
+	REDIS = redis.NewClient(url)
 
 	// Test connection
 	_, err = REDIS.Ping(ctx).Result()
 	if err != nil {
-		log.Panic().Err(err)
+		return err
 	} else {
-		log.Info().Msg("Successfully connected to redis!")
+		return nil
 	}
 }

@@ -2,19 +2,20 @@ package passwords
 
 import (
 	"crypto/rand"
-	"github.com/rs/zerolog/log"
+	"errors"
 )
 
 // Generate a random salt
 func GenerateSalt(size int) ([]byte, error) {
 
+	// Handle error size smaller than 1
+	if size < 0 {
+		return nil, errors.New("Canno't generate salt with byte size smaller than 1!")
+	}
+
 	// Generate random bytes
 	salt := make([]byte, size)
-	_, err := rand.Read(salt)
-
-	// Log on error
-	if err != nil {
-		log.Error().Msg("Failed reading random salt into bytes!")
+	if _, err := rand.Read(salt); err != nil {
 		return nil, err
 	}
 

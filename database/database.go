@@ -4,14 +4,13 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/rs/zerolog/log"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
 var DB *gorm.DB
 
-func ConnectToDB() {
+func ConnectToDB() error {
 	var err error
 
 	// Database connect vars
@@ -21,9 +20,8 @@ func ConnectToDB() {
 	// Connect to db
 	DB, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
-		log.Panic().Err(err)
-		return
+		return err
 	} else {
-		log.Info().Msg("Successfully connected to database!")
+		return nil
 	}
 }
