@@ -26,7 +26,7 @@ func ConnectToRedis() error {
 	}
 
 	// Connect to redis using url
-	REDIS := redis.NewClient(url)
+	REDIS = redis.NewClient(url)
 
 	// Test connection
 	_, err = REDIS.Ping(ctx).Result()
