@@ -32,8 +32,10 @@ func main() {
 	SetupRoutes(r)
 
 	// Run gin server
-	if err := r.Run(":80"); err != nil {
-		log.Panic().Msg("PANICIG failed to start gin server")
+	if err = r.Run(":80"); err != nil {
+		log.Panic().Err(err)
+	} else {
+		log.Info().Msg("Successfully started gin server!")
 	}
 }
 
