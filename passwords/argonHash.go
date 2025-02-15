@@ -2,7 +2,6 @@ package passwords
 
 import (
 	"encoding/base64"
-	"github.com/rs/zerolog/log"
 	"golang.org/x/crypto/argon2"
 )
 
@@ -11,8 +10,7 @@ func HashPassword(password string) (string, string, error) {
 	// Generate random salt
 	salt, err := GenerateSalt(16)
 	if err != nil {
-		log.Error().Msg("Failed generating salt")
-		return "", "", nil
+		return "", "", err
 	}
 
 	// Argon2id parameters
