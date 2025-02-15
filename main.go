@@ -13,7 +13,12 @@ func main() {
 	r := gin.Default()
 
 	// Connect to db
-	database.ConnectToDB()
+	err := database.ConnectToDB()
+	if err != nil {
+		log.Panic().Err(err)
+	} else {
+		log.Info().Msg("Successfully connected to database!")
+	}
 
 	// Connect to redis
 	database.ConnectToRedis()
