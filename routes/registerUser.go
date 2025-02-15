@@ -26,17 +26,24 @@ func RegisterUser(c *gin.Context) {
 	// Query for existing user
 	userQuery := User{}
 	queryResult := database.DB.Where("name = ?", newJSONUser.Name).Find(&userQuery)
+
+	// Return on error
 	if queryResult.Error != nil {
 		c.JSON(http.StatusInternalServerError, queryResult.Error)
 		return
 	}
+
+	// If duplicate was found return
 	if queryResult.RowsAffected > 0 {
-		// If duplicate was found return
 		c.JSON(http.StatusConflict, "Cannot register user, username duplicate!")
 		return
-	} else if queryResult.RowsAffected == 0 {
-		// If no duplicate was found try to hash password
+	}
+
+	// If no duplicate was found try to hash password
+	if queryResult.RowsAffected == 0 {
 		passwordHash, hashSalt, err := passwords.HashPassword(newJSONUser.PasswordHash)
+
+		// Return on error
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, err)
 			return
@@ -54,9 +61,10 @@ func RegisterUser(c *gin.Context) {
 		// Trying to insert into database
 		dbCreateResult := database.DB.Create(&newDbUser)
 		if dbCreateResult.Error != nil {
-			c.JSON(http.StatusInternalServerError, "Error occurred while inserting to database!")
+			c.JSON(http.StatusInternalServerError, dbCreateResult.Error)
 			return
 		}
+
 		// Return result
 		if dbCreateResult.RowsAffected > 0 {
 			c.JSON(http.StatusCreated, "Registered new user "+newDbUser.Name+" with id: "+newDbUser.ID)

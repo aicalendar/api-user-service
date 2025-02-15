@@ -20,34 +20,37 @@ func LoginUser(c *gin.Context) {
 	// Query for existing user based on type username
 	userQuery := User{}
 	queryResult := database.DB.Where(&User{Name: JSONUserData.Name}, "name").Find(&userQuery)
+
+	// Return on error
 	if queryResult.Error != nil {
-		// Return on error
 		c.JSON(http.StatusInternalServerError, "Error occurred while querying existing user!")
 		return
 	}
 
+	// If no user with matching name was found
 	if queryResult.RowsAffected == 0 {
-		// If no user with matching name was found
 		c.JSON(http.StatusConflict, "Invalid username!")
 		return
 	}
 
+	// If user was found compare passwords
 	if queryResult.RowsAffected > 0 {
-		// If user was found compare passwords
 		passwordMatch, err := passwords.ComparePasswords(JSONUserData.PasswordHash, userQuery.PasswordHash, userQuery.HashSalt)
+
+		// Return on error
 		if err != nil {
-			// Return on error
 			c.JSON(http.StatusInternalServerError, err)
 			return
 		}
+
+		// Return if passwords doesn't match
 		if !passwordMatch {
-			// Return if passwords doesn't match
 			c.JSON(http.StatusConflict, "Password doesn't match!")
 			return
 		}
 
+		// TODO: generate session token
 		if passwordMatch {
-			// TODO: generate session token
 			c.JSON(http.StatusOK, "Password matches!")
 			return
 		}
