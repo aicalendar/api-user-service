@@ -9,6 +9,8 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
+var REDIS *redis.Client
+
 func ConnectToRedis() {
 
 	// Create a context
@@ -25,10 +27,10 @@ func ConnectToRedis() {
 	}
 
 	// Connect to redis using url
-	client := redis.NewClient(url)
+	REDIS := redis.NewClient(url)
 
 	// Test connection
-	_, err = client.Ping(ctx).Result()
+	_, err = REDIS.Ping(ctx).Result()
 	if err != nil {
 		log.Panic().Err(err)
 	} else {
