@@ -3,6 +3,8 @@ package routes
 import (
 	"api-user-service/database"
 	"api-user-service/passwords"
+	"encoding/base64"
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -51,6 +53,23 @@ func LoginUser(c *gin.Context) {
 
 		// TODO: generate session token
 		if passwordMatch {
+
+			// Generate random session token
+			salt, err := passwords.GenerateSalt(32)
+			if err != nil {
+				c.JSON(http.StatusInternalServerError, err)
+				return
+			}
+
+			// Preapare variables for redis
+			sessionToken := base64.StdEncoding.EncodeToString(salt)
+			key := fmt.Sprintf("user:%s:sessions", userQuery.ID)
+
+			// Insert variables to redis
+			if err = database.REDIS.SAdd(c, key, sessionToken).Err(); err != nil {
+				c.JSON(http.StatusInternalServerError, err)
+			}
+
 			c.JSON(http.StatusOK, "Password matches!")
 			return
 		}
