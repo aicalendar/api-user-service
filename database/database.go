@@ -2,9 +2,9 @@ package database
 
 import (
 	"fmt"
-	"log"
 	"os"
 
+	"github.com/rs/zerolog/log"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -21,10 +21,9 @@ func ConnectToDB() {
 	// Connect to db
 	DB, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
-		log.Println("Failed to connect to database!")
+		log.Panic().Err(err)
 		return
+	} else {
+		log.Info().Msg("Successfully connected to database!")
 	}
-
-	log.Println("Connected to database!")
-
 }
