@@ -13,13 +13,13 @@ import (
 func RegisterUser(c *gin.Context) {
 	// Create / modify table based on schema
 	if err := database.DB.AutoMigrate(&User{}); err != nil {
-		log.Error().Msg("Error occured while migrating scheme")
+		log.Error().Err(err)
 	}
 
 	// Binds request to newJSONUser variable
 	var newJSONUser User
 	if err := c.BindJSON(&newJSONUser); err != nil {
-		c.JSON(http.StatusBadRequest, "Failed to bind JSON")
+		c.JSON(http.StatusBadRequest, err)
 		return
 	}
 
@@ -27,7 +27,7 @@ func RegisterUser(c *gin.Context) {
 	userQuery := User{}
 	queryResult := database.DB.Where("name = ?", newJSONUser.Name).Find(&userQuery)
 	if queryResult.Error != nil {
-		c.JSON(http.StatusInternalServerError, "Error occurred while querying existing user!")
+		c.JSON(http.StatusInternalServerError, queryResult.Error)
 		return
 	}
 	if queryResult.RowsAffected > 0 {
@@ -38,7 +38,7 @@ func RegisterUser(c *gin.Context) {
 		// If no duplicate was found try to hash password
 		passwordHash, hashSalt, err := passwords.HashPassword(newJSONUser.PasswordHash)
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, "Failed hashing password!")
+			c.JSON(http.StatusInternalServerError, err)
 			return
 		}
 
