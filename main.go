@@ -9,11 +9,13 @@ import (
 )
 
 func main() {
+	var err error
+
 	// Default gin engine instance
 	r := gin.Default()
 
 	// Connect to db
-	err := database.ConnectToDB()
+	err = database.ConnectToDB()
 	if err != nil {
 		log.Panic().Err(err)
 	} else {
@@ -21,7 +23,12 @@ func main() {
 	}
 
 	// Connect to redis
-	database.ConnectToRedis()
+	err = database.ConnectToRedis()
+	if err != nil {
+		log.Panic().Err(err)
+	} else {
+		log.Info().Msg("Successfully connected to redis!")
+	}
 
 	// Setup all api endpoints
 	SetupRoutes(r)
