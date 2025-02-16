@@ -6,6 +6,7 @@ import (
 	"encoding/base64"
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -64,9 +65,9 @@ func LoginUser(c *gin.Context) {
 			// Preapare variables for redis
 			sessionToken := base64.StdEncoding.EncodeToString(salt)
 			key := fmt.Sprintf("user:%s:sessions", userQuery.ID)
+			expiration := time.Now().Add(24 * time.Hour).Unix()
 
-			// Insert variables to redis
-			if err = database.REDIS.SAdd(c, key, sessionToken).Err(); err != nil {
+			if err = database.REDIS.HSet(c, key, sessionToken, expiration).Err(); err != nil {
 				c.JSON(http.StatusInternalServerError, err)
 			}
 
