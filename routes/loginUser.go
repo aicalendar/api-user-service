@@ -67,11 +67,16 @@ func LoginUser(c *gin.Context) {
 			key := fmt.Sprintf("user:%s:sessions", userQuery.ID)
 			expiration := time.Now().Add(24 * time.Hour).Unix()
 
+			// Insert session token in redis Hash
 			if err = database.REDIS.HSet(c, key, sessionToken, expiration).Err(); err != nil {
 				c.JSON(http.StatusInternalServerError, err)
+				return
 			}
 
-			c.JSON(http.StatusOK, "Password matches!")
+			c.JSON(http.StatusOK, gin.H{
+				"session token":  sessionToken,
+				"expirationUnix": expiration,
+			})
 			return
 		}
 	}
