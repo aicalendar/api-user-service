@@ -65,17 +65,16 @@ func LoginUser(c *gin.Context) {
 			// Preapare variables for redis
 			sessionToken := base64.StdEncoding.EncodeToString(salt)
 			key := fmt.Sprintf("user:%s:sessions", userQuery.ID)
-			expiration := time.Now().Add(24 * time.Hour).Unix()
+			expiration := 24 * time.Hour
 
 			// Insert session token in redis Hash
-			if err = database.REDIS.HSet(c, key, sessionToken, expiration).Err(); err != nil {
+			if err := database.REDIS.SetEx(c, key+":"+sessionToken, sessionToken, expiration).Err(); err != nil {
 				c.JSON(http.StatusInternalServerError, err)
 				return
 			}
 
 			c.JSON(http.StatusOK, gin.H{
-				"session token":  sessionToken,
-				"expirationUnix": expiration,
+				"session token": sessionToken,
 			})
 			return
 		}
