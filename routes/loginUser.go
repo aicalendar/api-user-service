@@ -76,6 +76,7 @@ func LoginUser(c *gin.Context) {
 				return
 			}
 
+			// Return session id
 			c.JSON(http.StatusOK, gin.H{
 				"sessionToken": sessionToken,
 			})
