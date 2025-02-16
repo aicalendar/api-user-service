@@ -32,7 +32,9 @@ func LoginUser(c *gin.Context) {
 
 	// If no user with matching name was found
 	if queryResult.RowsAffected == 0 {
-		c.JSON(http.StatusConflict, "Invalid username!")
+		c.JSON(http.StatusConflict, gin.H{
+			"error": "Wrong username!",
+		})
 		return
 	}
 
@@ -48,11 +50,12 @@ func LoginUser(c *gin.Context) {
 
 		// Return if passwords doesn't match
 		if !passwordMatch {
-			c.JSON(http.StatusConflict, "Password doesn't match!")
+			c.JSON(http.StatusConflict, gin.H{
+				"error": "Wrong password!",
+			})
 			return
 		}
 
-		// TODO: generate session token
 		if passwordMatch {
 
 			// Generate random session token
@@ -74,7 +77,7 @@ func LoginUser(c *gin.Context) {
 			}
 
 			c.JSON(http.StatusOK, gin.H{
-				"session token": sessionToken,
+				"sessionToken": sessionToken,
 			})
 			return
 		}
