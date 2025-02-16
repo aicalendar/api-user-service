@@ -2,7 +2,7 @@ package routes
 
 import (
 	"api-user-service/database"
-	"api-user-service/passwords"
+	"api-user-service/utils"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"time"
@@ -42,7 +42,7 @@ func RegisterUser(c *gin.Context) {
 
 	// If no duplicate was found try to hash password
 	if queryResult.RowsAffected == 0 {
-		passwordHash, hashSalt, err := passwords.HashPassword(newJSONUser.PasswordHash)
+		passwordHash, hashSalt, err := utils.HashPassword(newJSONUser.PasswordHash)
 
 		// Return on error
 		if err != nil {

@@ -2,7 +2,7 @@ package routes
 
 import (
 	"api-user-service/database"
-	"api-user-service/passwords"
+	"api-user-service/utils"
 	"encoding/base64"
 	"fmt"
 	"time"
@@ -39,7 +39,7 @@ func LoginUser(c *gin.Context) {
 
 	// If user was found compare passwords
 	if queryResult.RowsAffected > 0 {
-		passwordMatch, err := passwords.ComparePasswords(JSONUserData.PasswordHash, userQuery.PasswordHash, userQuery.HashSalt)
+		passwordMatch, err := utils.ComparePasswords(JSONUserData.PasswordHash, userQuery.PasswordHash, userQuery.HashSalt)
 
 		// Return on error
 		if err != nil {
@@ -58,7 +58,7 @@ func LoginUser(c *gin.Context) {
 		if passwordMatch {
 
 			// Generate random session token
-			salt, err := passwords.GenerateSalt(32)
+			salt, err := utils.GenerateSalt(32)
 			if err != nil {
 				c.JSON(500, err)
 				return
