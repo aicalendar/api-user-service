@@ -5,7 +5,6 @@ import (
 	"api-user-service/passwords"
 	"encoding/base64"
 	"fmt"
-	"net/http"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -16,7 +15,7 @@ func LoginUser(c *gin.Context) {
 	// Binds request to newJSONUser variable
 	var JSONUserData User
 	if err := c.BindJSON(&JSONUserData); err != nil {
-		c.JSON(http.StatusBadRequest, "Failed to bind JSON")
+		c.JSON(400, err)
 		return
 	}
 
@@ -26,13 +25,13 @@ func LoginUser(c *gin.Context) {
 
 	// Return on error
 	if queryResult.Error != nil {
-		c.JSON(http.StatusInternalServerError, "Error occurred while querying existing user!")
+		c.JSON(500, queryResult.Error)
 		return
 	}
 
 	// If no user with matching name was found
 	if queryResult.RowsAffected == 0 {
-		c.JSON(http.StatusConflict, gin.H{
+		c.JSON(400, gin.H{
 			"error": "Wrong username!",
 		})
 		return
@@ -44,13 +43,13 @@ func LoginUser(c *gin.Context) {
 
 		// Return on error
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, err)
+			c.JSON(500, err)
 			return
 		}
 
 		// Return if passwords doesn't match
 		if !passwordMatch {
-			c.JSON(http.StatusConflict, gin.H{
+			c.JSON(400, gin.H{
 				"error": "Wrong password!",
 			})
 			return
@@ -61,7 +60,7 @@ func LoginUser(c *gin.Context) {
 			// Generate random session token
 			salt, err := passwords.GenerateSalt(32)
 			if err != nil {
-				c.JSON(http.StatusInternalServerError, err)
+				c.JSON(500, err)
 				return
 			}
 
@@ -72,12 +71,12 @@ func LoginUser(c *gin.Context) {
 
 			// Insert session token in redis Hash
 			if err := database.REDIS.SetEx(c, key+":"+sessionToken, sessionToken, expiration).Err(); err != nil {
-				c.JSON(http.StatusInternalServerError, err)
+				c.JSON(500, err)
 				return
 			}
 
 			// Return session id
-			c.JSON(http.StatusOK, gin.H{
+			c.JSON(200, gin.H{
 				"sessionToken": sessionToken,
 			})
 			return
