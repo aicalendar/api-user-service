@@ -6,6 +6,7 @@ import (
 	"encoding/base64"
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -31,7 +32,9 @@ func LoginUser(c *gin.Context) {
 
 	// If no user with matching name was found
 	if queryResult.RowsAffected == 0 {
-		c.JSON(http.StatusConflict, "Invalid username!")
+		c.JSON(http.StatusConflict, gin.H{
+			"error": "Wrong username!",
+		})
 		return
 	}
 
@@ -47,11 +50,12 @@ func LoginUser(c *gin.Context) {
 
 		// Return if passwords doesn't match
 		if !passwordMatch {
-			c.JSON(http.StatusConflict, "Password doesn't match!")
+			c.JSON(http.StatusConflict, gin.H{
+				"error": "Wrong password!",
+			})
 			return
 		}
 
-		// TODO: generate session token
 		if passwordMatch {
 
 			// Generate random session token
@@ -64,13 +68,18 @@ func LoginUser(c *gin.Context) {
 			// Preapare variables for redis
 			sessionToken := base64.StdEncoding.EncodeToString(salt)
 			key := fmt.Sprintf("user:%s:sessions", userQuery.ID)
+			expiration := 24 * time.Hour
 
-			// Insert variables to redis
-			if err = database.REDIS.SAdd(c, key, sessionToken).Err(); err != nil {
+			// Insert session token in redis Hash
+			if err := database.REDIS.SetEx(c, key+":"+sessionToken, sessionToken, expiration).Err(); err != nil {
 				c.JSON(http.StatusInternalServerError, err)
+				return
 			}
 
-			c.JSON(http.StatusOK, "Password matches!")
+			// Return session id
+			c.JSON(http.StatusOK, gin.H{
+				"sessionToken": sessionToken,
+			})
 			return
 		}
 	}
