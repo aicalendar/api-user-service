@@ -4,7 +4,7 @@ import (
 	"unicode"
 )
 
-func isAlphanumeric(s string) bool {
+func isAlphanumeric(string string) bool {
 	// Loop through each character in the string
 	for _, char := range s {
 		if !unicode.IsLetter(char) && !unicode.IsDigit(char) { // Check if character is neither a letter nor a digit
