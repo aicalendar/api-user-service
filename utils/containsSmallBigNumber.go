@@ -4,13 +4,13 @@ import (
 	"unicode"
 )
 
-func isValidPassword(string string) bool {
+func ContainsSmallBigNumber(string string) bool {
 	hasUpper := false
 	hasLower := false
 	hasDigit := false
 
 	// Loop through each character in the password
-	for _, char := range password {
+	for _, char := range string {
 		if unicode.IsUpper(char) {
 			hasUpper = true
 		} else if unicode.IsLower(char) {
