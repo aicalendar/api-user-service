@@ -22,6 +22,20 @@ func RegisterUser(c *gin.Context) {
 		return
 	}
 
+	if err := utils.UsernameValidation(newJSONUser.Name); err != nil {
+		c.JSON(400, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	if err := utils.PasswordValidation(newJSONUser.PasswordHash); err != nil {
+		c.JSON(400, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
 	// Query for existing user
 	userQuery := User{}
 	queryResult := database.DB.Where("name = ?", newJSONUser.Name).Find(&userQuery)
