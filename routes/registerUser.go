@@ -2,7 +2,7 @@ package routes
 
 import (
 	"api-user-service/database"
-	"api-user-service/passwords"
+	"api-user-service/utils"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"time"
@@ -11,14 +11,28 @@ import (
 func RegisterUser(c *gin.Context) {
 	// Create / modify table based on schema
 	if err := database.DB.AutoMigrate(&User{}); err != nil {
-		c.JSON(500, err)
+		c.JSON(500, err.Error())
 		return
 	}
 
 	// Binds request to newJSONUser variable
 	var newJSONUser User
 	if err := c.BindJSON(&newJSONUser); err != nil {
-		c.JSON(400, err)
+		c.JSON(400, err.Error())
+		return
+	}
+
+	if err := utils.UsernameValidation(newJSONUser.Name); err != nil {
+		c.JSON(400, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	if err := utils.PasswordValidation(newJSONUser.PasswordHash); err != nil {
+		c.JSON(400, gin.H{
+			"error": err.Error(),
+		})
 		return
 	}
 
@@ -28,7 +42,7 @@ func RegisterUser(c *gin.Context) {
 
 	// Return on error
 	if queryResult.Error != nil {
-		c.JSON(500, queryResult.Error)
+		c.JSON(500, queryResult.Error.Error())
 		return
 	}
 
@@ -42,11 +56,11 @@ func RegisterUser(c *gin.Context) {
 
 	// If no duplicate was found try to hash password
 	if queryResult.RowsAffected == 0 {
-		passwordHash, hashSalt, err := passwords.HashPassword(newJSONUser.PasswordHash)
+		passwordHash, hashSalt, err := utils.HashPassword(newJSONUser.PasswordHash)
 
 		// Return on error
 		if err != nil {
-			c.JSON(500, err)
+			c.JSON(500, err.Error())
 			return
 		}
 
@@ -62,13 +76,15 @@ func RegisterUser(c *gin.Context) {
 		// Trying to insert into database
 		dbCreateResult := database.DB.Create(&newDbUser)
 		if dbCreateResult.Error != nil {
-			c.JSON(500, dbCreateResult.Error)
+			c.JSON(500, dbCreateResult.Error.Error())
 			return
 		}
 
 		// Return result
 		if dbCreateResult.RowsAffected > 0 {
-			c.JSON(201, gin.H{})
+			c.JSON(201, gin.H{
+				"status": "User registered successfully!",
+			})
 			return
 		}
 	}

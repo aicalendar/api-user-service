@@ -2,7 +2,7 @@ package routes
 
 import (
 	"api-user-service/database"
-	"api-user-service/passwords"
+	"api-user-service/utils"
 	"encoding/base64"
 	"fmt"
 	"time"
@@ -15,7 +15,7 @@ func LoginUser(c *gin.Context) {
 	// Binds request to newJSONUser variable
 	var JSONUserData User
 	if err := c.BindJSON(&JSONUserData); err != nil {
-		c.JSON(400, err)
+		c.JSON(400, err.Error())
 		return
 	}
 
@@ -25,7 +25,7 @@ func LoginUser(c *gin.Context) {
 
 	// Return on error
 	if queryResult.Error != nil {
-		c.JSON(500, queryResult.Error)
+		c.JSON(500, queryResult.Error.Error())
 		return
 	}
 
@@ -39,11 +39,11 @@ func LoginUser(c *gin.Context) {
 
 	// If user was found compare passwords
 	if queryResult.RowsAffected > 0 {
-		passwordMatch, err := passwords.ComparePasswords(JSONUserData.PasswordHash, userQuery.PasswordHash, userQuery.HashSalt)
+		passwordMatch, err := utils.ComparePasswords(JSONUserData.PasswordHash, userQuery.PasswordHash, userQuery.HashSalt)
 
 		// Return on error
 		if err != nil {
-			c.JSON(500, err)
+			c.JSON(500, err.Error())
 			return
 		}
 
@@ -58,9 +58,9 @@ func LoginUser(c *gin.Context) {
 		if passwordMatch {
 
 			// Generate random session token
-			salt, err := passwords.GenerateSalt(32)
+			salt, err := utils.GenerateSalt(32)
 			if err != nil {
-				c.JSON(500, err)
+				c.JSON(500, err.Error())
 				return
 			}
 
@@ -71,7 +71,7 @@ func LoginUser(c *gin.Context) {
 
 			// Insert session token in redis Hash
 			if err := database.REDIS.SetEx(c, key+":"+sessionToken, sessionToken, expiration).Err(); err != nil {
-				c.JSON(500, err)
+				c.JSON(500, err.Error())
 				return
 			}
 
