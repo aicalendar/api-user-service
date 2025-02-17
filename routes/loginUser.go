@@ -15,7 +15,7 @@ func LoginUser(c *gin.Context) {
 	// Binds request to newJSONUser variable
 	var JSONUserData User
 	if err := c.BindJSON(&JSONUserData); err != nil {
-		c.JSON(400, err)
+		c.JSON(400, err.Error())
 		return
 	}
 
@@ -25,7 +25,7 @@ func LoginUser(c *gin.Context) {
 
 	// Return on error
 	if queryResult.Error != nil {
-		c.JSON(500, queryResult.Error)
+		c.JSON(500, queryResult.Error.Error())
 		return
 	}
 
@@ -43,7 +43,7 @@ func LoginUser(c *gin.Context) {
 
 		// Return on error
 		if err != nil {
-			c.JSON(500, err)
+			c.JSON(500, err.Error())
 			return
 		}
 
@@ -60,7 +60,7 @@ func LoginUser(c *gin.Context) {
 			// Generate random session token
 			salt, err := utils.GenerateSalt(32)
 			if err != nil {
-				c.JSON(500, err)
+				c.JSON(500, err.Error())
 				return
 			}
 
@@ -71,7 +71,7 @@ func LoginUser(c *gin.Context) {
 
 			// Insert session token in redis Hash
 			if err := database.REDIS.SetEx(c, key+":"+sessionToken, sessionToken, expiration).Err(); err != nil {
-				c.JSON(500, err)
+				c.JSON(500, err.Error())
 				return
 			}
 

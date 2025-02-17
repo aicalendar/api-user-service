@@ -11,14 +11,14 @@ import (
 func RegisterUser(c *gin.Context) {
 	// Create / modify table based on schema
 	if err := database.DB.AutoMigrate(&User{}); err != nil {
-		c.JSON(500, err)
+		c.JSON(500, err.Error())
 		return
 	}
 
 	// Binds request to newJSONUser variable
 	var newJSONUser User
 	if err := c.BindJSON(&newJSONUser); err != nil {
-		c.JSON(400, err)
+		c.JSON(400, err.Error())
 		return
 	}
 
@@ -42,7 +42,7 @@ func RegisterUser(c *gin.Context) {
 
 	// Return on error
 	if queryResult.Error != nil {
-		c.JSON(500, queryResult.Error)
+		c.JSON(500, queryResult.Error.Error())
 		return
 	}
 
@@ -60,7 +60,7 @@ func RegisterUser(c *gin.Context) {
 
 		// Return on error
 		if err != nil {
-			c.JSON(500, err)
+			c.JSON(500, err.Error())
 			return
 		}
 
@@ -76,7 +76,7 @@ func RegisterUser(c *gin.Context) {
 		// Trying to insert into database
 		dbCreateResult := database.DB.Create(&newDbUser)
 		if dbCreateResult.Error != nil {
-			c.JSON(500, dbCreateResult.Error)
+			c.JSON(500, dbCreateResult.Error.Error())
 			return
 		}
 
