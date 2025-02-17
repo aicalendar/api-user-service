@@ -82,7 +82,9 @@ func RegisterUser(c *gin.Context) {
 
 		// Return result
 		if dbCreateResult.RowsAffected > 0 {
-			c.JSON(201, gin.H{})
+			c.JSON(201, gin.H{
+				"status": "User registered successfully!",
+			})
 			return
 		}
 	}
