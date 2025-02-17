@@ -2,15 +2,15 @@ package utils
 
 import "errors"
 
-func UsernameValidation(password string) error {
+func UsernameValidation(name string) error {
 
-	if IsEmpty(password) {
+	if IsEmpty(name) {
 		return errors.New("User name is empty!")
 	}
-	if !HasEnoughLetters(password, 3) {
+	if !HasEnoughLetters(name, 3) {
 		return errors.New("User name must contain 3 or more characters!")
 	}
-	if !isAlphanumeric(password) {
+	if !isAlphanumeric(name) {
 		return errors.New("User name canno't contain special characters!")
 	}
 
