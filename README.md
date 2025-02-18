@@ -16,6 +16,7 @@
 ```
 {
   "status": "success",
+  "error": null,
   "user": {
     "id": "345fd9bf-c510-498d-b1dd-ad97274a317a",
     "name": "John",
