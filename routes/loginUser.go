@@ -39,7 +39,7 @@ func LoginUser(c *gin.Context) {
 
 	// If user was found compare passwords
 	if queryResult.RowsAffected > 0 {
-		passwordMatch, err := utils.ComparePasswords(JSONUserData.PasswordHash, userQuery.PasswordHash, userQuery.HashSalt)
+		passwordMatch, err := utils.ComparePasswords(JSONUserData.Password, userQuery.Password, userQuery.Salt)
 
 		// Return on error
 		if err != nil {

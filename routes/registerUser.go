@@ -29,7 +29,7 @@ func RegisterUser(c *gin.Context) {
 		return
 	}
 
-	if err := utils.PasswordValidation(newJSONUser.PasswordHash); err != nil {
+	if err := utils.PasswordValidation(newJSONUser.Password); err != nil {
 		c.JSON(400, gin.H{
 			"error": err.Error(),
 		})
@@ -56,7 +56,7 @@ func RegisterUser(c *gin.Context) {
 
 	// If no duplicate was found try to hash password
 	if queryResult.RowsAffected == 0 {
-		passwordHash, hashSalt, err := utils.HashPassword(newJSONUser.PasswordHash)
+		passwordHash, hashSalt, err := utils.HashPassword(newJSONUser.Password)
 
 		// Return on error
 		if err != nil {
@@ -66,11 +66,11 @@ func RegisterUser(c *gin.Context) {
 
 		// User to insert into database
 		newDbUser := User{
-			ID:           uuid.New().String(),
-			Name:         newJSONUser.Name,
-			PasswordHash: passwordHash,
-			HashSalt:     hashSalt,
-			CreatedAt:    time.Now(),
+			ID:        uuid.New().String(),
+			Name:      newJSONUser.Name,
+			Password:  passwordHash,
+			Salt:      hashSalt,
+			CreatedAt: time.Now(),
 		}
 
 		// Trying to insert into database
