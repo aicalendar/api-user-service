@@ -39,7 +39,7 @@ func LoginUser(c *gin.Context) {
 
 	// If user was found compare passwords
 	if queryResult.RowsAffected > 0 {
-		passwordMatch, err := utils.ComparePasswords(JSONUserData.PasswordHash, userQuery.PasswordHash, userQuery.HashSalt)
+		passwordMatch, err := utils.ComparePasswords(JSONUserData.Password, userQuery.Password, userQuery.Salt)
 
 		// Return on error
 		if err != nil {
@@ -77,7 +77,13 @@ func LoginUser(c *gin.Context) {
 
 			// Return session id
 			c.JSON(200, gin.H{
-				"sessionToken": sessionToken,
+				"status": "success",
+				"error":  nil,
+				"user":   userQuery,
+				"sessionToken": Session{
+					Token:      sessionToken,
+					Expiration: expiration.Seconds(),
+				},
 			})
 			return
 		}
