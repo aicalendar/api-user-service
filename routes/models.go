@@ -13,6 +13,6 @@ type User struct {
 }
 
 type Session struct {
-	Token      string
-	Expiration float64
+	Token      string  `json:"token"`
+	Expiration float64 `json:"expiration"`
 }
