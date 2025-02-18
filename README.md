@@ -26,3 +26,34 @@
   }
 }
 ```
+
+### Register new user
+
+```http
+  POST /api/users/login
+```
+
+| Parameter | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `name` | `string` | **Required**. Name of the user |
+| `password` | `string` | **Required**. Password to compare |
+
+#### Response
+
+```
+{
+  "status": "success",
+  "error": null,
+  "sessionToken": {
+    "Token": "fCUcv1myKslsA3grLjrQKnc/CEo2hlX+MjiMGaC5Hjs=",
+    "Expiration": 86400
+  },
+  "user": {
+    "id": "345fd9bf-c510-498d-b1dd-ad97274a317a",
+    "name": "John",
+    "password": "QNmA+SusycmMOhRWtUk+o84c7Vpbq69/9b7tsINKqbw=",
+    "salt": "zOC6StaWJ1XLYf0iI7e6RA==",
+    "createdAt": "2025-02-18T05:02:18.469190426Z"
+  }
+}
+```

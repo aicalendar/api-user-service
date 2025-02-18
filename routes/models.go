@@ -11,3 +11,8 @@ type User struct {
 	Salt      string    `json:"salt"`
 	CreatedAt time.Time `json:"createdAt"`
 }
+
+type Session struct {
+	Token      string
+	Expiration float64
+}

@@ -77,7 +77,13 @@ func LoginUser(c *gin.Context) {
 
 			// Return session id
 			c.JSON(200, gin.H{
-				"sessionToken": sessionToken,
+				"status": "success",
+				"error":  nil,
+				"user":   userQuery,
+				"sessionToken": Session{
+					Token:      sessionToken,
+					Expiration: expiration.Seconds(),
+				},
 			})
 			return
 		}
