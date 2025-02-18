@@ -45,8 +45,8 @@
   "status": "success",
   "error": null,
   "sessionToken": {
-    "Token": "fCUcv1myKslsA3grLjrQKnc/CEo2hlX+MjiMGaC5Hjs=",
-    "Expiration": 86400
+    "token": "fCUcv1myKslsA3grLjrQKnc/CEo2hlX+MjiMGaC5Hjs=",
+    "expiration": 86400
   },
   "user": {
     "id": "345fd9bf-c510-498d-b1dd-ad97274a317a",
