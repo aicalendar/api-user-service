@@ -40,10 +40,10 @@ func main() {
 }
 
 func SetupRoutes(r *gin.Engine) {
-	routeGroup := r.Group("/api-user-service")
+	routeGroup := r.Group("/users")
 	{
 		routeGroup.GET("/ping", routes.Ping)
-		routeGroup.POST("/registerUser", routes.RegisterUser)
-		routeGroup.POST("/loginUser", routes.LoginUser)
+		routeGroup.POST("/register", routes.RegisterUser)
+		routeGroup.POST("/login", routes.LoginUser)
 	}
 }
