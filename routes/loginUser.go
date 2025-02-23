@@ -21,7 +21,7 @@ func LoginUser(c *gin.Context) {
 
 	// Query for existing user based on type username
 	userQuery := User{}
-	queryResult := database.DB.Where(&User{Email: JSONUserData.Email}, "email").Find(&userQuery)
+	queryResult := database.DB.Where("email = ?", JSONUserData.Email).Find(&userQuery)
 
 	// Return on error
 	if queryResult.Error != nil {
