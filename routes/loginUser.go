@@ -21,7 +21,7 @@ func LoginUser(c *gin.Context) {
 
 	// Query for existing user based on type username
 	userQuery := User{}
-	queryResult := database.DB.Where(&User{Name: JSONUserData.Name}, "name").Find(&userQuery)
+	queryResult := database.DB.Where(&User{Email: JSONUserData.Email}, "email").Find(&userQuery)
 
 	// Return on error
 	if queryResult.Error != nil {
@@ -32,7 +32,7 @@ func LoginUser(c *gin.Context) {
 	// If no user with matching name was found
 	if queryResult.RowsAffected == 0 {
 		c.JSON(400, gin.H{
-			"error": "Wrong username!",
+			"error": "Wrong email!",
 		})
 		return
 	}
