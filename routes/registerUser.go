@@ -22,7 +22,7 @@ func RegisterUser(c *gin.Context) {
 		return
 	}
 
-	if err := utils.UsernameValidation(newJSONUser.Name); err != nil {
+	if err := utils.EmailValidation(newJSONUser.Email); err != nil {
 		c.JSON(400, gin.H{
 			"error": err.Error(),
 		})
@@ -38,7 +38,7 @@ func RegisterUser(c *gin.Context) {
 
 	// Query for existing user
 	userQuery := User{}
-	queryResult := database.DB.Where("name = ?", newJSONUser.Name).Find(&userQuery)
+	queryResult := database.DB.Where("email = ?", newJSONUser.Email).Find(&userQuery)
 
 	// Return on error
 	if queryResult.Error != nil {
@@ -49,7 +49,7 @@ func RegisterUser(c *gin.Context) {
 	// If duplicate was found return
 	if queryResult.RowsAffected > 0 {
 		c.JSON(400, gin.H{
-			"error": "User with this name already exists!",
+			"error": "User with this email already exists!",
 		})
 		return
 	}
@@ -67,7 +67,7 @@ func RegisterUser(c *gin.Context) {
 		// User to insert into database
 		newDbUser := User{
 			ID:        uuid.New().String(),
-			Name:      newJSONUser.Name,
+			Email:     newJSONUser.Email,
 			Password:  passwordHash,
 			Salt:      hashSalt,
 			CreatedAt: time.Now(),
